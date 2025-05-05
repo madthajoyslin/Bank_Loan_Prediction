@@ -1,0 +1,396 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Loan Prediction</title>
+    <!-- Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+/* Basic Reset & Body Styling */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #e8ece9; /* Fallback color */
+    background-image: url('https://via.placeholder.com/150.png');
+    background-size: cover;       /* Cover the entire background */
+    background-position: center center; /* Center the image */
+    background-repeat: no-repeat; /* Don't tile the image */
+    background-attachment: fixed;  
+    color: #333;
+    line-height: 1.6;
+    padding: 20px; /* Keep padding if you want space around the edges */
+    min-height: 100vh;
+}
+
+/* Container for Centering and Max Width */
+.container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 30px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15); /* More pronounced container shadow ADDED */
+    /* border: 1px solid #ddd; Optional light border */
+}
+
+h1 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 30px;
+    font-weight: 600;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.05); /* Subtle text shadow for heading ADDED */
+}
+
+/* Form Grid Layout */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+.form-group {
+    /* No specific styles needed now, handled by grid gap */
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: #555;
+    font-size: 0.9em;
+    text-shadow: 0.5px 0.5px 1px rgba(0, 0, 0, 0.03); /* Subtle text shadow for labels ADDED */
+}
+
+/* Input and Select Styling */
+input[type=text],
+input[type=number],
+select {
+    width: 100%;
+    padding: 12px 15px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-family: inherit;
+    font-size: 0.95em;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.05) inset; /* Subtle inner shadow for inputs/selects ADDED */
+}
+
+input[type=text]:focus,
+input[type=number]:focus,
+select:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2), 1px 1px 3px rgba(0, 0, 0, 0.05) inset; /* Keep focus shadow + inner shadow */
+    outline: none;
+}
+
+/* Button Styling */
+.button-group {
+    text-align: center;
+    margin-top: 10px;
+}
+
+input[type=submit] {
+    background-color: #3498db;
+    color: white;
+    padding: 14px 40px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.05rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+    box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3); /* More prominent button shadow ADDED */
+}
+
+input[type=submit]:hover {
+    background-color: #2980b9;
+    box-shadow: 0 6px 10px rgba(52, 152, 219, 0.35); /* Even more shadow on hover ADDED */
+    transform: translateY(-1px); /* Slight lift on hover for added effect ADDED */
+}
+
+input[type=submit]:active {
+    transform: translateY(0); /* Reset lift on active */
+    box-shadow: 0 2px 5px rgba(52, 152, 219, 0.3); /* Reduced shadow on active */
+}
+
+/* Result Message Styling */
+.result {
+    margin-top: 30px;
+    padding: 15px 20px;
+    background-color: #eaf6ff;
+    border: 1px solid #b8d4fe;
+    border-radius: 5px;
+    text-align: center;
+    font-weight: 500;
+    color: #2c3e50;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.08); /* Subtle shadow for result ADDED */
+}
+
+/* Add a class for potential error styling later */
+.result.error {
+    background-color: #fff0f0;
+    border-color: #fcc;
+    color: #c00;
+}
+
+/* Style for Error Messages */
+.error-message {
+    color: #e74c3c;
+    font-size: 0.85em;
+    margin-top: 3px;
+    display: block;
+    text-shadow: 0.5px 0.5px 1px rgba(0, 0, 0, 0.05); /* Subtle text shadow for errors ADDED */
+}
+/* Optional: Style for input with error */
+input.input-error, select.input-error {
+    border-color: #e74c3c;
+    box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.2), 1px 1px 3px rgba(0, 0, 0, 0.05) inset; /* Keep error shadow + inner shadow */
+}
+
+/* Responsive Adjustments */
+@media (max-width: 600px) {
+    .container {
+        margin: 20px auto;
+        padding: 20px;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.12); /* Slightly reduced shadow on smaller screens */
+    }
+    .form-grid {
+        grid-template-columns: 1fr; /* Stack to single column */
+    }
+    h1 {
+        font-size: 1.5em;
+    }
+    input[type=submit] {
+        width: 100%; /* Full width button on small screens */
+        box-shadow: 0 3px 6px rgba(52, 152, 219, 0.3); /* Slightly reduced button shadow on smaller screens */
+    }
+    input[type=submit]:hover {
+        box-shadow: 0 5px 9px rgba(52, 152, 219, 0.35); /* Adjust hover shadow for smaller screens */
+    }
+}
+    
+    </style>
+</head>
+<body>
+   
+    <div class="container">
+        <h1>LoanMate Companion</h1>
+        <!-- Add novalidate to disable default browser validation bubbles -->
+        <form id="loan-form" action="/predict" method="post" novalidate>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="person_age">Person Age:</label>
+                    <input type="number" id="person_age" name="person_age" required">
+                    <span class="error-message" id="age-error"></span> <!-- Placeholder for age error -->
+                </div>
+
+                <div class="form-group">
+                    <label for="person_gender">Gender:</label>
+                    <select id="person_gender" name="person_gender" required>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                    </select>
+                    <span class="error-message" id="gender-error"></span> <!-- Placeholder -->
+                </div>
+                <div class="form-group">
+                    <label for="person_education">Education:</label>
+                    <select id="person_education" name="person_education" required>
+                        <option value="Associate">Associate</option>
+                        <option value="Bachelor">Bachelor</option>
+                        <option value="Doctorate">Doctorate</option>
+                        <option value="High School">High School</option>
+                        <option value="Master">Master</option>
+                    </select>
+                     <span class="error-message" id="education-error"></span> <!-- Placeholder -->
+                </div>
+                <div class="form-group">
+                    <label for="person_income">Person Income (USD):</label>
+                    <input type="number" id="person_income" name="person_income" step="any" required>
+                    <span class="error-message" id="income-error"></span> <!-- Placeholder -->
+                </div>
+                <div class="form-group">
+                    <label for="person_emp_exp">Employment Experience (Years):</label>
+                    <input type="number" id="person_emp_exp" name="person_emp_exp" required>
+                    <span class="error-message" id="exp-error"></span> <!-- Placeholder for experience error -->
+                </div>
+                <div class="form-group">
+                    <label for="person_home_ownership">Home Ownership:</label>
+                    <select id="person_home_ownership" name="person_home_ownership" required>
+                        <option value="RENT">RENT</option>
+                        <option value="OWN">OWN</option>
+                        <option value="MORTGAGE">MORTGAGE</option>
+                        <option value="OTHER">OTHER</option>
+                    </select>
+                     <span class="error-message" id="ownership-error"></span> <!-- Placeholder -->
+                </div>
+                <div class="form-group">
+                    <label for="loan_amnt">Loan Amount (USD):</label>
+                    <input type="number" id="loan_amnt" name="loan_amnt" step="any" required>
+                    <span class="error-message" id="amount-error"></span> <!-- Placeholder -->
+                </div>
+                <div class="form-group">
+                    <label for="loan_intent">Loan Intent:</label>
+                    <select id="loan_intent" name="loan_intent" required>
+                        <option value="PERSONAL">PERSONAL</option>
+                        <option value="EDUCATION">EDUCATION</option>
+                        <option value="MEDICAL">MEDICAL</option>
+                        <option value="VENTURE">VENTURE</option>
+                        <option value="HOMEIMPROVEMENT">HOMEIMPROVEMENT</option>
+                        <option value="DEBTCONSOLIDATION">DEBTCONSOLIDATION</option>
+                    </select>
+                    <span class="error-message" id="intent-error"></span> <!-- Placeholder -->
+                </div>
+                <div class="form-group">
+                    <label for="credit_score">Credit Score:</label>
+                    <input type="number" id="credit_score" name="credit_score" required>
+                    <span class="error-message" id="score-error"></span> <!-- Placeholder for score error -->
+                </div>
+            </div> <!-- End of form-grid -->
+
+            <!-- General Error Message Area (Optional but good) -->
+            <div id="form-summary-error" class="error-message" style="text-align: center; font-weight: bold; margin-bottom: 15px;"></div>
+
+            <div class="button-group">
+                <input type="submit" value="Check Eligibility">
+            </div>
+        </form>
+
+        {% if prediction_text %}
+        <div class="result">
+            <p>{{ prediction_text }}</p>
+        </div>
+        {% endif %}
+    </div> <!-- End of container -->
+
+    <script>
+        // Get references to the form and relevant elements
+        const form = document.getElementById('loan-form');
+        const personAgeInput = document.getElementById('person_age');
+        const personExpInput = document.getElementById('person_emp_exp');
+        const creditScoreInput = document.getElementById('credit_score');
+
+        // Get references to error message placeholders
+        const ageError = document.getElementById('age-error');
+        const expError = document.getElementById('exp-error');
+        const scoreError = document.getElementById('score-error');
+        const formSummaryError = document.getElementById('form-summary-error'); // General error area
+
+        // --- Helper function to show/hide error messages ---
+        function displayError(inputElement, errorElement, message) {
+            inputElement.classList.add('input-error'); // Add error class to input
+            errorElement.textContent = message; // Show message
+        }
+
+        function clearError(inputElement, errorElement) {
+            inputElement.classList.remove('input-error'); // Remove error class
+            errorElement.textContent = ''; // Clear message
+        }
+        // --- End Helper function ---
+
+        // Add event listener for form submission
+        form.addEventListener('submit', function(event) {
+            let isValid = true; // Flag to track overall validity
+
+            // --- Clear previous errors ---
+            clearError(personAgeInput, ageError);
+            clearError(personExpInput, expError);
+            clearError(creditScoreInput, scoreError);
+            formSummaryError.textContent = ''; // Clear summary error
+
+            // --- Validation Logic ---
+
+            // 1. Validate Person Age
+            const age = parseInt(personAgeInput.value, 10); // Parse as integer
+            if (isNaN(age) || age < 18 || age > 70) {
+                displayError(personAgeInput, ageError, 'Age must be between 18 to 70');
+                isValid = false;
+            }
+
+            // 2. Validate Employment Experience
+            const experience = parseInt(personExpInput.value, 10);
+            if (isNaN(experience) || experience < 0 || experience > 35) { // Also check for negative experience
+                displayError(personExpInput, expError, 'Experience cannot exceed 35 years.');
+                isValid = false;
+            }
+
+            // 3. Validate Credit Score
+            const score = parseInt(creditScoreInput.value, 10);
+             if (isNaN(score) || score < 0 || score > 1000) { // Also check for negative score
+                displayError(creditScoreInput, scoreError, 'Credit Score cannot exceed more than 1000');
+                isValid = false;
+            }
+
+            // --- Check other required fields (basic check) ---
+            // You can add more checks here if needed for dropdowns etc.
+            const requiredSelects = form.querySelectorAll('select[required]');
+            requiredSelects.forEach(select => {
+                const errorSpanId = select.id + '-error';
+                const errorSpan = document.getElementById(errorSpanId);
+                if (select.value === "") {
+                     if (errorSpan) { // Check if error span exists
+                        displayError(select, errorSpan, 'Please select an option.');
+                     }
+                     isValid = false;
+                 } else if (errorSpan) {
+                    clearError(select, errorSpan); // Clear error if valid
+                 }
+            });
+
+             // --- Prevent form submission if invalid ---
+            if (!isValid) {
+                event.preventDefault(); // Stop the form from submitting
+                formSummaryError.textContent = 'Please correct the errors highlighted above.'; // Show summary error
+            }
+            // If isValid is true, the form will submit as normal
+        });
+
+        // Optional: Add real-time validation on input change (more complex)
+        // Example for Age:
+     
+        personAgeInput.addEventListener('input', function() {
+            clearError(personAgeInput, ageError);
+            const age = parseInt(personAgeInput.value, 10);
+            if (isNaN(age) || age < 18 || age > 70) {
+                 displayError(personAgeInput, ageError, 'Age must be between 18 to 70');
+                 isValid = false;
+            }
+        });
+        
+    // 2. employment experience
+            personExpInput.addEventListener('input', function() {
+            clearError(personExpInput, expError);
+            const experience = parseInt(personExpInput.value, 10);
+           if (isNaN(experience) || experience < 0 || experience > 35) { // Also check for negative experience
+                 displayError(personExpInput, expError, 'Experience cannot exceed 35 years.');
+                isValid = false;
+            }
+        });
+
+        // 3. Validate Credit Score
+         creditScoreInput.addEventListener('input', function() {
+            clearError(creditScoreInput, scoreError);
+             const score = parseInt(creditScoreInput.value, 10);
+             if (isNaN(score) || score < 0 || score > 1000) { // Also check for negative score
+                displayError(creditScoreInput, scoreError, 'Credit Score cannot exceed more than 1000');
+                  isValid = false;
+            }
+        });
+
+    </script>
+
+</body>
+</html>
